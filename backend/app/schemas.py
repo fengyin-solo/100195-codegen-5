@@ -28,6 +28,35 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class FireInspectionItem(BaseModel):
+    """一次批次检验里单条设施的读数。"""
+
+    facility_id: int
+    pressure: float
+    extinguisher_count: int | None = None
+
+
+class FireInspectionBatchPayload(BaseModel):
+    """消防设施整批检验提交：同一场站多条设施共用检验日期与下次检验月份。"""
+
+    batch_no: str = Field(min_length=1)
+    station: str = Field(min_length=1)
+    inspect_date: str = Field(min_length=1)
+    next_month: str = Field(min_length=1)
+    items: list[FireInspectionItem] = Field(min_length=1)
+
+
+class BatchInspectionResult(BaseModel):
+    ok: bool
+    message: str
+    batch_no: str
+    success_count: int = 0
+    failure_count: int = 0
+    skipped_count: int = 0
+    duplicated: bool = False
+    results: list[dict[str, Any]] = Field(default_factory=list)
+
+
 
 class WindfarmEntry(BaseModel):
     """风电场站明细结构。"""
@@ -244,3 +273,15 @@ class SettleEntry(BaseModel):
     field_5: str | None = None  # 补贴金额
     field_6: str | None = None  # 结算金额
     field_7: str | None = None  # 结算状态
+
+class FireEntry(BaseModel):
+    """消防设施明细结构。"""
+
+    field_0: str | None = None  # 设施编号
+    field_1: str | None = None  # 所属场站
+    field_2: str | None = None  # 设施类型
+    field_3: str | None = None  # 安装位置
+    field_4: str | None = None  # 灭火器数量
+    field_5: str | None = None  # 上次检验日期
+    field_6: str | None = None  # 压力表读数
+    field_7: str | None = None  # 下次检验月份
