@@ -28,6 +28,53 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class FireInspectItem(BaseModel):
+    """批量检验中单条设施的检验结果；缺省字段回落到批次级取值。"""
+
+    id: int
+    pressure: Any = None
+    inspect_date: str | None = None
+    next_month: str | None = None
+
+
+class FireInspectPayload(BaseModel):
+    """一次批量检验提交：同一批次号重复提交不会多出记录。"""
+
+    batch_id: str | None = None
+    inspect_date: str | None = None
+    next_month: str | None = None
+    items: list[FireInspectItem] = Field(default_factory=list)
+
+
+class FireInspectItemResult(BaseModel):
+    id: int
+    ok: bool
+    message: str
+
+
+class FireInspectResult(BaseModel):
+    ok: bool
+    message: str
+    batch_id: str
+    recorded: int = 0
+    failed: int = 0
+    duplicated: int = 0
+    results: list[FireInspectItemResult] = Field(default_factory=list)
+
+
+class FireEntry(BaseModel):
+    """消防设施明细结构。"""
+
+    field_0: str | None = None  # 设施编号
+    field_1: str | None = None  # 设施名称
+    field_2: str | None = None  # 所属场站
+    field_3: str | None = None  # 灭火器数量
+    field_4: str | None = None  # 上次检验日期
+    field_5: str | None = None  # 压力表读数
+    field_6: str | None = None  # 下次检验月份
+    field_7: str | None = None  # 设施状态
+
+
 
 class WindfarmEntry(BaseModel):
     """风电场站明细结构。"""
